@@ -1,9 +1,6 @@
 Core:
-  DONE: autoload all modules in modules directory.
-  DONE: init all modules in config.
   setup more config stuff that passes to modules via init. 
     (e.g. http server runs on x ports, the pidfile is here)
   
 Modules:
-  split out proc monitoring and net monitoring. Let the modules inherit from them.
-
+  abstract out proc monitoring and net monitoring. Let the modules inherit from them.
