@@ -21,13 +21,14 @@
 
     httpd.setTimeout(500);
     httpd.on('error', function(e) {
-      ev.emit('fail', {name: 'httpd', port: 80, message: e.errno});
+      ev.emit('crit', {name: 'httpd', port: 80, message: e.errno});
     });
     httpd.on('timeout', function() {
       httpd.destroy();
-      ev.emit('fail', {name: 'httpd', port: 80, message: "Timeout!"});
+      ev.emit('crit', {name: 'httpd', port: 80, message: "Timeout!"});
     });
     httpd.on('connect', function(connect) {
+      ev.emit('info', {name: 'httpd', message: 'httpd is OK.'});
       httpd.end();
     });
     httpd.connect(80);
@@ -37,7 +38,7 @@
     function ensureFile() {
       fs.lstat(pidfile, function(err,stat) {
         if(err) {
-          ev.emit('fail', {name: 'httpd', message: 'pid file missing!'});
+          ev.emit('warn', {name: 'httpd', message: 'pid file missing!'});
           return;
         }
         if(stat.isFile()) {
@@ -59,12 +60,12 @@
           ;
 
         if(err) { 
-          ev.emit('fail', {name: 'httpd', message: 'APACHE CRASHED!'});
+          ev.emit('crit', {name: 'httpd', message: 'APACHE CRASHED!'});
           return;
         }
 
         if(datas[0].indexOf('httpd') == -1) {
-          ev.emit('fail', {name: 'httpd', message: 'pid file incorrect!'});
+          ev.emit('crit', {name: 'httpd', message: 'pid file incorrect!'});
           return;
         }
 
