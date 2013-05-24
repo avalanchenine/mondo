@@ -2,12 +2,13 @@
   "use strict";
 
   var net = require('net')
-    , ev  = require('events')
-    , emtr = new ev.EventEmitter()
+    , ents = require('events')
+    , ev  = new ents.EventEmitter()
     , fs = require('fs')
     , pidfile = '/usr/local/apache/logs/httpd.pid'
     , iv = []
     ;
+
   
   function init() {
     iv.push(setInterval(conn, 2000));
@@ -20,14 +21,13 @@
 
     httpd.setTimeout(500);
     httpd.on('error', function(e) {
-      emtr.emit('fail', {name: 'httpd', port: 80, message: e.errno});
+      ev.emit('fail', {name: 'httpd', port: 80, message: e.errno});
     });
     httpd.on('timeout', function() {
       httpd.destroy();
-      emtr.emit('fail', {name: 'httpd', port: 80, message: "Timeout!"});
+      ev.emit('fail', {name: 'httpd', port: 80, message: "Timeout!"});
     });
     httpd.on('connect', function(connect) {
-      console.log('conn good.');
       httpd.end();
     });
     httpd.connect(80);
@@ -37,7 +37,7 @@
     function ensureFile() {
       fs.lstat(pidfile, function(err,stat) {
         if(err) {
-          emtr.emit('fail', {name: 'httpd', message: 'pid file missing!'});
+          ev.emit('fail', {name: 'httpd', message: 'pid file missing!'});
           return;
         }
         if(stat.isFile()) {
@@ -59,15 +59,14 @@
           ;
 
         if(err) { 
-          emtr.emit('fail', {name: 'httpd', message: 'APACHE CRASHED!'});
+          ev.emit('fail', {name: 'httpd', message: 'APACHE CRASHED!'});
           return;
         }
 
         if(datas[0].indexOf('httpd') == -1) {
-          emtr.emit('fail', {name: 'httpd', message: 'pid file incorrect!'});
+          ev.emit('fail', {name: 'httpd', message: 'pid file incorrect!'});
           return;
         }
-        console.log('everything appears fine.');
 
       });
 
@@ -76,5 +75,5 @@
   }
 
   module.exports.init = init;
-  module.exports.emtr = emtr;
+  module.exports.ev = ev;
 }());
