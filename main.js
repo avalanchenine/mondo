@@ -2,6 +2,7 @@
   "use strict";
   var config  = require('./config.js')
     , fs      = require('fs')
+    , handlers = require('./handlers.js')
     , modules = {}
     ;
   function loadModules() {
@@ -28,16 +29,13 @@
 
   function initModules() {
     Object.keys(modules).forEach(function(module) {
-      modules[module].ev.addListener('fail', handleFail);
+      // The extra foreach is done for the possible addition of future handlers.
+      Object.keys(handlers).forEach(function(handler) {
+        modules[module].ev.addListener(handler, handlers[handler]);
+      });
       modules[module].init();
     });
     console.log('Loaded and initialized.');
-  }
-
-
-  function handleFail(data) {
-    console.log('Omg a fail event! data:\n', data);
-
   }
 
   loadModules();
