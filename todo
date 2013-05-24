@@ -1,6 +1,6 @@
 Core:
-  autoload all modules in modules directory.
-  init all modules in config.
+  DONE: autoload all modules in modules directory.
+  DONE: init all modules in config.
   setup more config stuff that passes to modules via init. 
     (e.g. http server runs on x ports, the pidfile is here)
   
