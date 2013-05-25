@@ -29,11 +29,24 @@
 
   function initModules() {
     Object.keys(modules).forEach(function(module) {
-      // The extra foreach is done for the possible addition of future handlers.
-      Object.keys(handlers).forEach(function(handler) {
-        modules[module].ev.addListener(handler, handlers[handler]);
-      });
-      modules[module].init();
+      if(modules[module] instanceof Array) {
+        modules[module].forEach(function(multi) {
+          Object.keys(handlers).forEach(function(handler) {
+            multi.addListener(handler, handlers[handler]);
+          });
+        });
+      } else {
+        Object.keys(handlers).forEach(function(handler) {
+          modules[module].addListener(handler, handlers[handler]);
+        });
+      }
+      if(modules[module] instanceof Array) {
+        modules[module].forEach(function(multi) {
+          multi.init();
+        });
+      } else {
+        modules[module].init();
+      }
     });
     console.log('Loaded and initialized.');
   }
