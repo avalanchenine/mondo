@@ -56,12 +56,13 @@
     
     function checkState(pid) {
       fs.readFile('/proc/' + pid + '/status', 'utf-8', function(err,data) {
-        var datas = data.split('\n')
+        var datas
           ;
-
-        if(err) { 
+        if(err || data === undefined) {
           ev.emit('crit', {name: 'httpd', message: 'APACHE CRASHED!'});
           return;
+        } else {
+          datas = data.split('\n');
         }
 
         if(datas[0].indexOf('httpd') == -1) {
